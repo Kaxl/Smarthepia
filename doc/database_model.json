@@ -1,16 +1,16 @@
 Sensors : {
-    sensor,
-    data: [
+    "_id": "String", // ip_addr+sensor_id
+    "data": [
         {
-            battery,
-            controller,
-            humidity,
-            location,
-            luminance,
-            motion,
-            sensor,
-            temperature,
-            updateTime
+            "battery": "Number",
+            "controller": "String",
+            "humidity": "Number",
+            "location": "String",
+            "luminance": "Number",
+            "motion": "Boolean",
+            "sensor": "Number",
+            "temperature": "Number",
+            "updateTime": "Number"
         }
     ]
 }
