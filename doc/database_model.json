@@ -1,0 +1,16 @@
+Sensors : {
+    sensor,
+    data: [
+        {
+            battery,
+            controller,
+            humidity,
+            location,
+            luminance,
+            motion,
+            sensor,
+            temperature,
+            updateTime
+        }
+    ]
+}
