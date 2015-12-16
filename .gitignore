@@ -46,3 +46,12 @@ project/plugins/project/
 
 # Librairies
 lib/*
+
+# play framework
+logs/
+project/project/
+project/target/
+public/
+target/
+
+
