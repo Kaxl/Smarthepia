@@ -27,7 +27,7 @@ class Application extends Controller {
     def getSensor = Action.async {
         //Ok(views.html.index("Your new application is ready."))
         WS.url("http://129.194.185.199:5000/sensors/3/all_measures").get().map { response =>
-            Ok(response.json)
+            OK(response.json)
         }
     }
 
