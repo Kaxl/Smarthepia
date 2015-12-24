@@ -63,6 +63,7 @@ class Application extends Controller {
         }
     }
 
+<<<<<<< HEAD
     //def index = Action.async {
     //    WS.url("http://129.194.185.199:5000/sensors/3/all_measures").get().map { response =>
     //        Ok(response.json)
@@ -88,6 +89,20 @@ class Application extends Controller {
     //    collection.insert(response.json).map(lastError =>
     //            OK("Mongo LastErro: %s".format(lastError)))
     //}
+=======
+    def getSensor = Action.async {
+        //Ok(views.html.index("Your new application is ready."))
+        WS.url("http://129.194.185.199:5000/sensors/3/all_measures").get().map { response =>
+            OK(response.json)
+        }
+    }
+
+    def writeData = {
+        val msg = getSensor()
+        collection.insert(response.json).map(lastError =>
+                OK("Mongo LastErro: %s".format(lastError)))
+    }
+>>>>>>> cf952d14ae4ec5bc3319d109a8e1d0c3974b8f31
 }
 
 
