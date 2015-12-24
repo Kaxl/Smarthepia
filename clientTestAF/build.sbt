@@ -13,8 +13,10 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.reactivemongo" %% "reactivemongo" % "0.11.9",
-  "io.spray" %%  "spray-json" % "1.3.2"
+  "io.spray" %%  "spray-json" % "1.3.2",
+  "net.liftweb" %% "lift-json" % "2.5+"
 )
+
 
 fork in run := true
 
