@@ -97,11 +97,12 @@ object Client {
    * @brief Main function of the client
    */
   def main(args: Array[String]): Unit = {
+    process()
     //Scheduler.schedule(() => println("Do something"), 0L, 5L, TimeUnit.SECONDS)
-    val system = akka.actor.ActorSystem("system")
-    system.scheduler.schedule(0 seconds, 5 seconds){
-      println("Do something")
-    }
+    //val system = akka.actor.ActorSystem("system")
+    //system.scheduler.schedule(0 seconds, 5 seconds){
+    //  println("Do something")
+    //}
     //system.scheduler.schedule(0 seconds, 5 seconds)(process())
 
     //object task extends TimerTask {
@@ -145,6 +146,7 @@ object Client {
     }
     // Creation of the sensor
     val sensor = createSensor(m)
+    println(sensor)
     // Creation of the document
     val document = BSON.write(sensor)
 
