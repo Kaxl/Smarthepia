@@ -7,16 +7,15 @@ version := "2015"
 scalaVersion := "2.11.7"
 
 resolvers ++= Seq(
-  "spray repo" at "http://repo.spray.io/"
+  "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
+  "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
 )
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.reactivemongo" %% "reactivemongo" % "0.11.9",
-  "io.spray" %%  "spray-json" % "1.3.2",
-  "net.liftweb" %% "lift-json" % "2.5+"
+  "com.typesafe.akka" %% "akka-actor" % "2.4-SNAPSHOT"
 )
-
 
 fork in run := true
 
