@@ -1,6 +1,9 @@
 # vim files
 *.swp
 
+# PDF of documentation
+doc/*.pdf
+
 # latex files
 *.aux
 *.glo
