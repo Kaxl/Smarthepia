@@ -198,12 +198,12 @@ class ClientJob extends Job {
  * every 5 minutes
  */
 object Main extends App {
-  val scheduler = StdSchedulerFactory.getDefaultScheduler();
+  val scheduler = StdSchedulerFactory.getDefaultScheduler()
 
-  scheduler.start();
+  scheduler.start()
 
   // Define the job and tie it to our ClientJob class
-  val job = newJob(classOf[ClientJob]).withIdentity("jobClient", "groupClient").build();
+  val job = newJob(classOf[ClientJob]).withIdentity("jobClient", "groupClient").build()
 
   // Trigger the job to run now, and then repeat every 5 minutes
   val trigger = newTrigger()
@@ -215,5 +215,5 @@ object Main extends App {
     .build();
 
   // Tell quartz to schedule the job using our trigger
-  scheduler.scheduleJob(job, trigger);
+  scheduler.scheduleJob(job, trigger)
 }
