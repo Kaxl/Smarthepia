@@ -19,6 +19,8 @@ libraryDependencies ++= Seq(
 
 fork in run := true
 
+cancelable in Global := true
+
 javaOptions in run += "-Xmx2G"
 
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-Xfatal-warnings", "-Xlint" )

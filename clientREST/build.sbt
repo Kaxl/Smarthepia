@@ -12,11 +12,14 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+  "org.quartz-scheduler" % "quartz" % "2.2.1",
   "org.reactivemongo" %% "reactivemongo" % "0.11.9",
   "com.typesafe.akka" %% "akka-actor" % "2.2.5"
 )
 
 fork in run := true
+
+cancelable in Global := true
 
 javaOptions in run += "-Xmx2G"
 

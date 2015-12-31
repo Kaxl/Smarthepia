@@ -4,21 +4,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.util.parsing.json._
 
+// Import for http request
 import scala.io.Source._
+// Import for ReactiveMongo
+import reactivemongo._
 import reactivemongo.api._
 import reactivemongo.api.MongoDriver
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson._
-import reactivemongo.bson.BSONDocument
-import reactivemongo._
 
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext
-import ExecutionContext.Implicits.global
+// Import for Quartz library
+import java.util.Date
 
-//import java.util.Timer
-//import java.time.Duration
-
+import org.quartz.JobBuilder.newJob
+import org.quartz.SimpleScheduleBuilder.simpleSchedule
+import org.quartz.TriggerBuilder.newTrigger
+import org.quartz.impl.StdSchedulerFactory
+import org.quartz.Job
+import org.quartz.JobExecutionContext
 
 /**
  * @brief Case class representing a sensor
@@ -79,53 +82,35 @@ object Client {
   // Database connection
   val driver = new MongoDriver
   val connection = driver.connection(List("86.119.33.122:27017"))
-
   val db = connection("SmarthepiaDB")
   val collection = db.collection("sensors")
 
   /**
    * @brief HTTP request on the REST server (raspberry) to get information from sensors
    *
+   * Handles timeout if server is not responding
+   *
    * @param url Url of the server
    *
    * @return A string contening the data
    */
-  def get(url: String) = scala.io.Source.fromURL(url).mkString
-
-
-  /**
-   * @brief Main function of the client
-   */
-  def main(args: Array[String]): Unit = {
-    process()
-    //Scheduler.schedule(() => println("Do something"), 0L, 5L, TimeUnit.SECONDS)
-    //val system = akka.actor.ActorSystem("system")
-    //system.scheduler.schedule(0 seconds, 5 seconds){
-    //  println("Do something")
-    //}
-    //system.scheduler.schedule(0 seconds, 5 seconds)(process())
-
-    //object task extends TimerTask {
-    //  var isRunning = false
-
-    //  def run() {
-    //    if (!isRunning) {
-    //      isRunning = true
-    //      process()
-    //      isRunning = false
-    //    }
-    //  }
-    //}
-
-    //new Timer().schedule(task, 0, 1000)
-    //TimerTask task = new TimerSchedulePeriod();
-    //Timer timer = new Timer();
-    //timer.schedule(task, 100, 100);
-
-    //public void run() {
-    //  println("Timer");
-    //}
+  @throws(classOf[java.io.IOException])
+  @throws(classOf[java.net.SocketTimeoutException])
+  def get(url: String,
+          connectTimeout:Int =5000,
+          readTimeout:Int =5000,
+          requestMethod: String = "GET") = {
+      import java.net.{URL, HttpURLConnection}
+      val connection = (new URL(url)).openConnection.asInstanceOf[HttpURLConnection]
+      connection.setConnectTimeout(connectTimeout)
+      connection.setReadTimeout(readTimeout)
+      connection.setRequestMethod(requestMethod)
+      val inputStream = connection.getInputStream
+      val content = io.Source.fromInputStream(inputStream).mkString
+      if (inputStream != null) inputStream.close
+      content
   }
+
 
   /**
    * @brief Download the data and write them into MongoDB
@@ -136,30 +121,35 @@ object Client {
    */
   def process(): Unit = {
     // Get the data from the server
-    val data = get(urlAll)
+    try {
+      val data = get(urlAll)
 
-    // Parse the json string and create a Map[String, Any] containing the data
-    val json: Option[Any] = JSON.parseFull(data)
-    val m: Map[String, Any] = json match {
-      case Some(value) => value.asInstanceOf[Map[String, Any]]
-      case None => null
-    }
-    // Creation of the sensor
-    val sensor = createSensor(m)
-    println(sensor)
-    // Creation of the document
-    val document = BSON.write(sensor)
-
-    // Insert the document into MongoDB
-    val future = collection.insert(document)
-    future.onComplete {
-      case Failure(e) => throw e
-      case Success(lastError) => {
-        println("successfully inserted document with lastError = " + lastError)
+      // Parse the json string and create a Map[String, Any] containing the data
+      val json: Option[Any] = JSON.parseFull(data)
+      val m: Map[String, Any] = json match {
+        case Some(value) => value.asInstanceOf[Map[String, Any]]
+        case None => null
       }
+      // Creation of the sensor
+      val sensor = createSensor(m)
+      println(sensor)
+      // Creation of the document
+      val document = BSON.write(sensor)
+
+      // Insert the document into MongoDB
+      val future = collection.insert(document)
+      future.onComplete {
+        case Failure(e) => throw e
+        case Success(lastError) => {
+          println("successfully inserted document with lastError = " + lastError)
+        }
+      }
+    } catch {
+      case ioe: java.io.IOException =>
+        println("IO Exception in http resquest")
+      case ste: java.net.SocketTimeoutException =>
+        println("Socket timeout exception in http resquest")
     }
-    // WTF is the app not exiting ???
-    //sys.exit(0)
   }
 
   /**
@@ -185,4 +175,45 @@ object Client {
 
     Sensor(battery, controller, humidity, location, luminance, motion, sensor, temperature, updateTime)
   }
+}
+
+
+/**
+ * @brief Client job, executed at regular interval
+ */
+class ClientJob extends Job {
+
+  def execute(context: JobExecutionContext) {
+    println("Insert at: " + new Date)
+    Client.process
+  }
+}
+
+
+/**
+ * @brief Main class
+ *
+ * Start the quartz job, calling the process function,
+ * which get data from Raspberry PI and store it in the database
+ * every 5 minutes
+ */
+object Main extends App {
+  val scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+  scheduler.start();
+
+  // Define the job and tie it to our ClientJob class
+  val job = newJob(classOf[ClientJob]).withIdentity("jobClient", "groupClient").build();
+
+  // Trigger the job to run now, and then repeat every 5 minutes
+  val trigger = newTrigger()
+    .withIdentity("triggerClient", "groupClient")
+    .startNow()
+    .withSchedule(simpleSchedule()
+      .withIntervalInMinutes(5)
+      .repeatForever())
+    .build();
+
+  // Tell quartz to schedule the job using our trigger
+  scheduler.scheduleJob(job, trigger);
 }
