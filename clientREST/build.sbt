@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.quartz-scheduler" % "quartz" % "2.2.1",
   "org.reactivemongo" %% "reactivemongo" % "0.11.9",
-  "com.typesafe.akka" %% "akka-actor" % "2.2.5"
+  "com.typesafe.akka" %% "akka-actor" % "2.2.5",
+  "com.typesafe.akka" %% "akka-slf4j" % "2.4.0"
 )
 
 fork in run := true

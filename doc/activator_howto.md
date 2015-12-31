@@ -10,8 +10,11 @@ header-includes:
 Activator
 =========
 
-# Creation of new project
+## Creation of new project
 
 `activator new project_name play-scala`
 
+## Run
 
+`$ activator`
+`[serverREST] $ run`
