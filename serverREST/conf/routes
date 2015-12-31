@@ -15,3 +15,24 @@ PUT     /user/:firstName/:lastName  @controllers.Users.updateUser(firstName: Str
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+
+
+
+# Sensor management API
+# Arguments are dates (between two dates)
+# By sensor
+GET     /sensor/:sensorID/:piID/temperature     @controllers.Sensors.getTemperature(sensorID: Int, piID: String)
+#GET     /sensor/:sensorID/:piID/humidity        @controllers.Sensors.getHumidity(sensorID: Int, piID: String)
+#GET     /sensor/:sensorID/:piID/luminance       @controllers.Sensors.getLuminance(sensorID: Int, piID: String)
+#GET     /sensor/:sensorID/:piID/all             @controllers.Sensors.getAllFromID(sensorID: Int, piID: String)
+#GET     /sensor/:piID/all                       @controllers.Sensors.getAllFromPI(piID: String)
+
+# By room
+#GET     /room/:name/temperature             @controllers.Rooms.getTemperature(name: String)
+#GET     /room/:name/humidity                @controllers.Rooms.getHumidity(name: String)
+#GET     /room/:name/luminance               @controllers.Rooms.getLuminance(name: String)
+#GET     /room/:name/all                     @controllers.Rooms.getAll(name: String)
+
+# Battery info
+#GET     /battery/:piID/:pourcentage        @controllers.Sensors.getBattery(piID: String, pourcentage: Double)
