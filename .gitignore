@@ -2,7 +2,7 @@
 *.swp
 
 # PDF of documentation
-doc/*.pdf
+#doc/*.pdf
 
 # latex files
 *.aux
