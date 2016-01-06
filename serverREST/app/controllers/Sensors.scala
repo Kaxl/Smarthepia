@@ -10,6 +10,9 @@ import javax.inject.Singleton
 import play.api.mvc._
 import play.api.libs.json._
 
+// Java date
+import java.text.SimpleDateFormat
+
 /**
  * The Sensors controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
  * play plugin. This provides a non-blocking driver for mongoDB as well as some useful additions for handling JSon.
@@ -47,10 +50,19 @@ class Sensors extends Controller with MongoController {
    * @return
    */
   def getTemperature(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    // Parse the date, check if provided, else provide default
+    val dStart : String = dteStart.getOrElse("20000101")
+    val dEnd : String = dteEnd.getOrElse("20500101")
+    // Conversion of date to Unix format
+    val dteStartUnix = getUnixTimeFromString(dStart)
+    println(dStart)
+    println(dteStartUnix)
+    val dteEndUnix = getUnixTimeFromString(dEnd)
+    println(dEnd)
+    println(dteEndUnix)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      //find(Json.obj("updateTime" -> {"$gt": dteStart, "$lt": dteEnd})).
-      find(Json.obj("sensor" -> sensorID, "controller" -> piID), Json.obj("temperature" -> 1, "_id" -> 0)).
+      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("temperature" -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
@@ -67,6 +79,19 @@ class Sensors extends Controller with MongoController {
         sensors =>
           Ok(sensors(0))
       }
+  }
+
+
+  /**
+   * @brief Get the Unix time from a string date in format "yyyyMMdd"
+   *
+   * @param dte   Date to parse
+   *
+   * @return The Unix timestamp
+   */
+  def getUnixTimeFromString(dte: String): Long = {
+    val stringFormat = new SimpleDateFormat("yyyyMMdd")
+    stringFormat.parse(dte).getTime() / 1000
   }
 
 
