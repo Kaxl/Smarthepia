@@ -25,9 +25,8 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 GET     /sensor/$sensorID<[0-9]+>/:piID/temperature     @controllers.Sensors.getTemperature(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/$sensorID<[0-9]+>/:piID/humidity        @controllers.Sensors.getHumidity(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/$sensorID<[0-9]+>/:piID/luminance       @controllers.Sensors.getLuminance(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
-#GET     /sensor/$sensorID<[0-9]+>/:piID/luminance       @controllers.Sensors.getLuminance(sensorID: Int, piID: String)
-#GET     /sensor/$sensorID<[0-9]+>/:piID/all             @controllers.Sensors.getAllFromID(sensorID: Int, piID: String)
-#GET     /sensor/:piID/all                       @controllers.Sensors.getAllFromPI(piID: String)
+GET     /sensor/$sensorID<[0-9]+>/:piID/all             @controllers.Sensors.getAllFromID(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
+GET     /sensor/:piID/all                               @controllers.Sensors.getAllFromPI(piID: String, dteStart: Option[String], dteEnd: Option[String])
 
 # By room
 #GET     /room/:name/temperature             @controllers.Rooms.getTemperature(name: String)
