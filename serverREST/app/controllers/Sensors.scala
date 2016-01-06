@@ -63,7 +63,7 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj(typeSensor -> 1, "_id" -> 0)).
+      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
