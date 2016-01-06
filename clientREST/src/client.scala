@@ -210,7 +210,7 @@ object Main extends App {
     .withIdentity("triggerClient", "groupClient")
     .startNow()
     .withSchedule(simpleSchedule()
-      .withIntervalInMinutes(5)
+      .withIntervalInMinutes(4)
       .repeatForever())
     .build();
 
