@@ -55,11 +55,7 @@ class Sensors extends Controller with MongoController {
     val dEnd : String = dteEnd.getOrElse("20500101")
     // Conversion of date to Unix format
     val dteStartUnix = getUnixTimeFromString(dStart)
-    println(dStart)
-    println(dteStartUnix)
     val dteEndUnix = getUnixTimeFromString(dEnd)
-    println(dEnd)
-    println(dteEndUnix)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
       find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("temperature" -> 1, "_id" -> 0)).
