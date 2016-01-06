@@ -36,19 +36,27 @@ class Sensors extends Controller with MongoController {
   import models._
   import models.JsonFormatsSensor._
 
-  def getTemperature(sensorID: Int, piID: String) = Action.async {
-    val cursor: Cursor[Sensor] = collection.
+  /**
+   * @brief Get the temperature of a sensor ID from a Raspberry between two dates
+   *
+   * @param sensorID  ID of the sensor
+   * @param piID      ID of the Raspberry
+   * @param dteStart  Date start
+   * @param dteEnd    Date end
+   *
+   * @return
+   */
+  def getTemperature(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
       //find(Json.obj("updateTime" -> {"$gt": dteStart, "$lt": dteEnd})).
-      //find(Json.obj("sensor" -> sensorID, "controller" -> piID)).
-      find(Json.obj("sensor" -> sensorID)).
+      find(Json.obj("sensor" -> sensorID, "controller" -> piID), Json.obj("temperature" -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
-      cursor[Sensor]
-
+      cursor[JsObject]
       // Put all the JsObjects in a list
-      val futureSensorList: Future[List[Sensor]] = cursor.collect[List]()
+      val futureSensorList: Future[List[JsObject]] = cursor.collect[List]()
 
       // Transform the list into a JsArray
       val futureSensorsJsonArray: Future[JsArray] = futureSensorList.map { sensors =>
