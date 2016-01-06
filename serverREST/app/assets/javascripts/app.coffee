@@ -16,6 +16,9 @@ angular.module('myApp.routeConfig', ['ngRoute'])
     .config(['$routeProvider', ($routeProvider) ->
         $routeProvider
             .when('/', {
+                templateUrl: '/assets/partials/sensors.html'
+            })
+            .when('/users', {
                 templateUrl: '/assets/partials/view.html'
             })
             .when('/users/create', {
