@@ -21,6 +21,10 @@ import java.text.SimpleDateFormat
 @Singleton
 class Sensors extends Controller with MongoController {
 
+  // Default date from request
+  private final val DATE_START_DEFAULT = "20000101"
+  private final val DATE_END_DEFAULT = "20500101"
+
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Sensors])
 
   /*
@@ -50,15 +54,31 @@ class Sensors extends Controller with MongoController {
    * @return
    */
   def getTemperature(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getValueSensor("temperature", sensorID, piID, dteStart, dteEnd)
+  }
+
+
+  /**
+   * @brief Get data of typeSensor of a sensor ID from a Raspberry between two dates
+   *
+   * @param typeSensor  Type of sensor
+   * @param sensorID    ID of the sensor
+   * @param piID        ID of the Raspberry
+   * @param dteStart    Date start
+   * @param dteEnd      Date end
+   *
+   * @return
+   */
+  def getValueSensor(typeSensor: String, sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = {
     // Parse the date, check if provided, else provide default
-    val dStart : String = dteStart.getOrElse("20000101")
-    val dEnd : String = dteEnd.getOrElse("20500101")
+    val dStart : String = dteStart.getOrElse(DATE_START_DEFAULT)
+    val dEnd : String = dteEnd.getOrElse(DATE_END_DEFAULT)
     // Conversion of date to Unix format
     val dteStartUnix = getUnixTimeFromString(dStart)
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("temperature" -> 1, "_id" -> 0)).
+      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj(typeSensor -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
@@ -77,6 +97,17 @@ class Sensors extends Controller with MongoController {
       }
   }
 
+  def getHumidity(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getValueSensor("humidity", sensorID, piID, dteStart, dteEnd)
+  }
+
+  def getLuminance(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getValueSensor("luminance", sensorID, piID, dteStart, dteEnd)
+  }
+
+  //def getAllFromID(sensorID: Int, piID: String) = ???
+
+  //def getAllfromPI(piID: String) = ???
 
   /**
    * @brief Get the Unix time from a string date in format "yyyyMMdd"
@@ -89,15 +120,5 @@ class Sensors extends Controller with MongoController {
     val stringFormat = new SimpleDateFormat("yyyyMMdd")
     stringFormat.parse(dte).getTime() / 1000
   }
-
-
-  //def getHumidity(sensorID: Int, piID: String) = ???
-
-  //def getLuminance(sensorID: Int, piID: String) = ???
-
-  //def getAllFromID(sensorID: Int, piID: String) = ???
-
-  //def getAllfromPI(piID: String) = ???
-
 }
 
