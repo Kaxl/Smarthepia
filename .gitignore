@@ -54,7 +54,7 @@ lib/*
 logs/
 project/project/
 project/target/
-public/
+#public/
 target/
 
 
