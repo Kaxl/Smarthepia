@@ -34,7 +34,7 @@ class Sensors extends Controller with MongoController {
   // ------------------------------------------ //
 
   import models._
-  import models.JsonFormats._
+  import models.JsonFormatsSensor._
 
   def getTemperature(sensorID: Int, piID: String) = Action.async {
     val cursor: Cursor[Sensor] = collection.

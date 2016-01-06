@@ -71,6 +71,7 @@ class Users extends Controller with MongoController {
   }
 
   def findUsers = Action.async {
+    println("Find user")
     // let's do our query
     val cursor: Cursor[User] = collection.
       // find all
