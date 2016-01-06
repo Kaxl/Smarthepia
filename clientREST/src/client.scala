@@ -78,7 +78,6 @@ object Sensor {
  */
 object Client {
 
-  private final val urlAll = "http://129.194.185.199:5000/sensors/3/all_measures"
   // Database connection
   val driver = new MongoDriver
   val connection = driver.connection(List("86.119.33.122:27017"))
@@ -119,10 +118,10 @@ object Client {
    *
    * @return
    */
-  def process(): Unit = {
+  def process(url: String): Unit = {
     // Get the data from the server
     try {
-      val data = get(urlAll)
+      val data = get(url)
 
       // Parse the json string and create a Map[String, Any] containing the data
       val json: Option[Any] = JSON.parseFull(data)
@@ -183,9 +182,16 @@ object Client {
  */
 class ClientJob extends Job {
 
+  private final val urlStart = "http://129.194.185.199:5000/sensors/"
+  private final val urlEnd = "/all_measures"
+
   def execute(context: JobExecutionContext) {
-    println("Insert at: " + new Date)
-    Client.process
+    println("Insert at : " + new Date)
+    for (sensorNumber <- 2 to 16) {
+      println("Getting info from sensor : " + sensorNumber)
+      val url = urlStart + sensorNumber + urlEnd
+      Client.process(url)
+    }
   }
 }
 
