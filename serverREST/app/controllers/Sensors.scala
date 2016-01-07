@@ -54,7 +54,7 @@ class Sensors extends Controller with MongoController {
    *
    * @return
    */
-  def getValueSensor(typeSensor: String, sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = {
+  def getSensorValue(typeSensor: String, sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = {
     // Parse the date, check if provided, else provide default
     val dStart : String = dteStart.getOrElse(DATE_START_DEFAULT)
     val dEnd : String = dteEnd.getOrElse(DATE_END_DEFAULT)
@@ -82,16 +82,74 @@ class Sensors extends Controller with MongoController {
       }
   }
 
-  def getTemperature(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
-    getValueSensor("temperature", sensorID, piID, dteStart, dteEnd)
+  /**
+   * @brief Get data of typeSensor from a Room
+   *
+   * @param typeSensor  Type of sensor
+   * @param roomName    Name of the room
+   * @param dteStart    Date start
+   * @param dteEnd      Date end
+   *
+   * @return
+   */
+  def getRoomValue(typeSensor: String, roomName: String, dteStart: Option[String], dteEnd: Option[String]) = {
+    // Parse the date, check if provided, else provide default
+    val dStart : String = dteStart.getOrElse(DATE_START_DEFAULT)
+    val dEnd : String = dteEnd.getOrElse(DATE_END_DEFAULT)
+    // Conversion of date to Unix format
+    val dteStartUnix = getUnixTimeFromString(dStart)
+    val dteEndUnix = getUnixTimeFromString(dEnd)
+    val cursor: Cursor[JsObject] = collection.
+      // Find between the two dates
+      find(Json.obj("location" -> roomName, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
+      // Sort them by updateTime
+      sort(Json.obj("updateTime" -> -1)).
+      // Perform the query and get a cursor of JsObject
+      cursor[JsObject]
+      // Put all the JsObjects in a list
+      val futureSensorList: Future[List[JsObject]] = cursor.collect[List]()
+
+      // Transform the list into a JsArray
+      val futureSensorsJsonArray: Future[JsArray] = futureSensorList.map { sensors =>
+        Json.arr(sensors)
+      }
+      // Reply with the array
+      futureSensorsJsonArray.map {
+        sensors =>
+          Ok(sensors(0))
+      }
   }
 
-  def getHumidity(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
-    getValueSensor("humidity", sensorID, piID, dteStart, dteEnd)
+  /**
+   * Sensors
+   * Method to get a special field of the sensors by sensor ID
+   */
+  def getTemperatureSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getSensorValue("temperature", sensorID, piID, dteStart, dteEnd)
   }
 
-  def getLuminance(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
-    getValueSensor("luminance", sensorID, piID, dteStart, dteEnd)
+  def getHumiditySensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getSensorValue("humidity", sensorID, piID, dteStart, dteEnd)
+  }
+
+  def getLuminanceSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getSensorValue("luminance", sensorID, piID, dteStart, dteEnd)
+  }
+
+  /**
+   * Rooms
+   * Method to get a special field of the sensors by location (room)
+   */
+  def getTemperatureRoom(name: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getRoomValue("temperature", name, dteStart, dteEnd)
+  }
+
+  def getHumidityRoom(name: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getRoomValue("humidity", name, dteStart, dteEnd)
+  }
+
+  def getLuminanceRoom(name: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getRoomValue("luminance", name, dteStart, dteEnd)
   }
 
   /**
@@ -102,9 +160,9 @@ class Sensors extends Controller with MongoController {
    * @param dteStart    Date start
    * @param dteEnd      Date end
    *
-   * @return 
+   * @return
    */
-  def getAllFromID(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+  def getAllFromSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
     // Parse the date, check if provided, else provide default
     val dStart : String = dteStart.getOrElse(DATE_START_DEFAULT)
     val dEnd : String = dteEnd.getOrElse(DATE_END_DEFAULT)
@@ -133,13 +191,50 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
+   * @brief Get all values of room
+   *
+   * @param name        Name of the room
+   * @param dteStart    Date start
+   * @param dteEnd      Date end
+   *
+   * @return
+   */
+  def getAllFromRoom(name: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    // Parse the date, check if provided, else provide default
+    val dStart : String = dteStart.getOrElse(DATE_START_DEFAULT)
+    val dEnd : String = dteEnd.getOrElse(DATE_END_DEFAULT)
+    // Conversion of date to Unix format
+    val dteStartUnix = getUnixTimeFromString(dStart)
+    val dteEndUnix = getUnixTimeFromString(dEnd)
+    val cursor: Cursor[JsObject] = collection.
+      // Find between the two dates
+      find(Json.obj("location" -> name, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("_id" -> 0)).
+      // Sort them by updateTime
+      sort(Json.obj("updateTime" -> -1)).
+      // Perform the query and get a cursor of JsObject
+      cursor[JsObject]
+      // Put all the JsObjects in a list
+      val futureSensorList: Future[List[JsObject]] = cursor.collect[List]()
+
+      // Transform the list into a JsArray
+      val futureSensorsJsonArray: Future[JsArray] = futureSensorList.map { sensors =>
+        Json.arr(sensors)
+      }
+      // Reply with the array
+      futureSensorsJsonArray.map {
+        sensors =>
+          Ok(sensors(0))
+      }
+  }
+
+  /**
    * @brief Get all values of a Raspberry
    *
    * @param piID        ID of the Raspberry
    * @param dteStart    Date start
    * @param dteEnd      Date end
    *
-   * @return 
+   * @return
    */
   def getAllFromPI(piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
     // Parse the date, check if provided, else provide default
