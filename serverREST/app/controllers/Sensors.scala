@@ -265,6 +265,36 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
+   * @brief Get list of Sensors which have a battery below (or equal) the given pourcentage
+   *
+   * @param piID          ID of the Raspberry
+   * @param pourcentage   Pourcentage limit
+   *
+   * @return
+   */
+  def getBattery(piID: String, pourcentage: Int) = Action.async {
+    val cursor: Cursor[JsObject] = collection.
+      // Find between the two dates
+      find(Json.obj("controller" -> piID, "battery" -> Json.obj("$lte" -> pourcentage)), Json.obj("sensor" -> 1, "battery" -> 1, "_id" -> 0)).
+      // Sort them by updateTime
+      sort(Json.obj("updateTime" -> -1)).
+      // Perform the query and get a cursor of JsObject
+      cursor[JsObject]
+      // Put all the JsObjects in a list
+      val futureSensorList: Future[List[JsObject]] = cursor.collect[List]()
+
+      // Transform the list into a JsArray
+      val futureSensorsJsonArray: Future[JsArray] = futureSensorList.map { sensors =>
+        Json.arr(sensors)
+      }
+      // Reply with the array
+      futureSensorsJsonArray.map {
+        sensors =>
+          Ok(sensors(0))
+      }
+  }
+
+  /**
    * @brief Get the Unix time from a string date in format "yyyyMMdd"
    *
    * @param dte   Date to parse

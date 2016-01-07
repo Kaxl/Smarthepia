@@ -35,4 +35,4 @@ GET     /room/:name/luminance               @controllers.Sensors.getLuminanceRoo
 GET     /room/:name/all                     @controllers.Sensors.getAllFromRoom(name: String, dteStart: Option[String], dteEnd: Option[String])
 
 # Battery info
-#GET     /battery/:piID/:pourcentage        @controllers.Sensors.getBattery(piID: String, pourcentage: Double)
+GET     /battery/:piID/:pourcentage        @controllers.Sensors.getBattery(piID: String, pourcentage: Int)
