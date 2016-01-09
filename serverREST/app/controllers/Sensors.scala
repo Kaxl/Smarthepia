@@ -13,6 +13,15 @@ import play.api.libs.json._
 // Java date
 import java.text.SimpleDateFormat
 
+
+
+// test with json
+case class Data(updateTime: Long, value: Double)
+
+object Data {
+  implicit val dataReader = Json.reads[Data]
+}
+
 /**
  * The Sensors controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
  * play plugin. This provides a non-blocking driver for mongoDB as well as some useful additions for handling JSon.
@@ -63,18 +72,32 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
+      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
       val futureSensorList: Future[List[JsObject]] = cursor.collect[List]()
+      //futureSensorList.foreach(println)
+      //for (value <- futureSensorList) {
+      //  value.foreach(str => str match {
+      //    case typeSensor => println("Name of sensor " + str)
+      //  })
+      //}
 
       // Transform the list into a JsArray
       val futureSensorsJsonArray: Future[JsArray] = futureSensorList.map { sensors =>
         Json.arr(sensors)
       }
+      //val data = futureSensorsJsonArray.as[List[Data]]
+      //data.foreach(println)
+      //for (value <- futureSensorsJsonArray) {
+      //  for (v <- value) {
+      //    println("New")
+      //    println(v)
+      //  }
+      //}
       // Reply with the array
       futureSensorsJsonArray.map {
         sensors =>
@@ -101,7 +124,7 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("location" -> roomName, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
+      find(Json.obj("location" -> roomName, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
@@ -171,7 +194,7 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("_id" -> 0)).
+      find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
@@ -208,7 +231,7 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("location" -> name, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("_id" -> 0)).
+      find(Json.obj("location" -> name, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
@@ -245,7 +268,7 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("controller" -> piID, "updateTime" -> Json.obj("$gt" -> dteStartUnix, "$lt" -> dteEndUnix)), Json.obj("_id" -> 0)).
+      find(Json.obj("controller" -> piID, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
       // Perform the query and get a cursor of JsObject
