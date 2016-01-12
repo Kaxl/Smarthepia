@@ -1,8 +1,7 @@
+name := "clientREST-Smarthepia"
+
 organization := "ch.hepia"
-
-name := "client"
-
-version := "2015"
+version := "2016"
 
 scalaVersion := "2.11.7"
 

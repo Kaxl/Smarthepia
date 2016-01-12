@@ -1,4 +1,7 @@
-name := """simple-rest-scala"""
+name := """serverREST-Smarthepia"""
+
+organization := "ch.hepia"
+version := "2016"
 
 version := "1.0-SNAPSHOT"
 
