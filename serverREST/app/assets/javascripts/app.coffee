@@ -2,6 +2,8 @@
 dependencies = [
     'ngRoute',
     'ui.bootstrap',
+    'nvd3',
+    'ui.bootstrap.datetimepicker'
     'myApp.filters',
     'myApp.services',
     'myApp.controllers',
