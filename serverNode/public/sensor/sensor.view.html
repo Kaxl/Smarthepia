@@ -1,29 +1,43 @@
 <div ng-controller="SensorController as vm">
     <div class="bg-light lter b-b wrapper-md">
         <h1 class="m-n font-thin h3">Filter</h1>
-        <button type="button" name="load.temperature" class="btn btn-info pull-right" ng-click="vm.loadTemperatures('3', 'Pi 3', '20160101', '20160202')">Get !</button>
+        <input type="text" name="sensor.id" ng-model="vm.filter.sensorId" >
+        <input type="text" name="pi.id" ng-model="vm.filter.piId" >
+        <input type="text" name="date.start" ng-model="vm.filter.dteStart" >
+        <input type="text" name="date.end" ng-model="vm.filter.dteEnd" >
+
+        <button type="button" name="load.temperature" class="btn btn-info" ng-click="vm.loadTemperatures(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get Temp!</button>
+        <button type="button" name="load.humidity" class="btn btn-success" ng-click="vm.loadHumidity(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get Hum!</button>
+        <button type="button" name="load.luminance" class="btn btn-danger" ng-click="vm.loadLuminance(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get Lux!</button>
+        <button type="button" name="load.all" class="btn btn-default" ng-click="vm.loadAll(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get All!</button>
     </div>
-    <div class="wrapper-md" ng-controller="SensorController as vm">
+    <div class="wrapper-md">
         <div class="row">
-            <!-- <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-heading font-bold">Temperature
-             <button type="button" name="load.temperature" class="btn btn-info btn-xs" ng-click="vm.loadTemperatures('3', 'Pi 3', '20160101', '20160202')">Get !</button>
-          </div>
-          <div class="panel-body">
-            <span ng-repeat="temp in vm.temperatures">
-                {{temp.temperature}}
-            </span>
-          </div>
-        </div>
-      </div> -->
-            <!-- <div class="col-md-6"> -->
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading font-bold">Temperatures</div>
-                    <div class="panel-body" ng-if="myJson">
-                        <!-- <button type="button" class="btn btn-danger" name="button" ng-click="vm.test()">CLICK HERE !</button> -->
-                        <zingchart id="myChart" zc-json="myJson" zc-height=400 zc-width=1000></zingchart>
+                    <div class="panel-body" ng-if="vm.temperaturesChart">
+                        <zingchart id="chart.temp" zc-json="vm.temperaturesChart" zc-height=400 zc-width=1300></zingchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">Humidity</div>
+                    <div class="panel-body" ng-if="vm.humidityChart">
+                        <zingchart id="chart.humidity" zc-json="vm.humidityChart" zc-height=400 zc-width=1300></zingchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">Luminance</div>
+                    <div class="panel-body" ng-if="vm.luminanceChart">
+                        <zingchart id="chart.luminance" zc-json="vm.luminanceChart" zc-height=400 zc-width=1300></zingchart>
                     </div>
                 </div>
             </div>
