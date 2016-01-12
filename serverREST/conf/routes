@@ -1,21 +1,9 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
-#
-# Note: @controllers syntax signifies the actual controller instance, retrieved via GlobalSettings.getController().
 # ~~~~
 
-# Single endpoint for serving AngularJS
-GET     /                           @controllers.Application.index
-GET     /randomUUID                 @controllers.Application.randomUUID
-
-# User management API
-GET     /users                      @controllers.Users.findUsers
-POST    /user                       @controllers.Users.createUser
-PUT     /user/:firstName/:lastName  @controllers.Users.updateUser(firstName: String, lastName: String)
-
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-
+# Home - default route
+GET /                   @controllers.Application.index
 
 # Sensor management API
 # Arguments are dates (between two dates)
@@ -34,3 +22,6 @@ GET     /room/:name/all                     @controllers.Sensors.getAllFromRoom(
 
 # Battery info
 GET     /battery/:piID/:pourcentage        @controllers.Sensors.getBattery(piID: String, pourcentage: Int)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file)
