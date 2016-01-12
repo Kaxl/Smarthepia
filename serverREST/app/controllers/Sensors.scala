@@ -79,25 +79,12 @@ class Sensors extends Controller with MongoController {
       cursor[JsObject]
       // Put all the JsObjects in a list
       val futureSensorList: Future[List[JsObject]] = cursor.collect[List]()
-      //futureSensorList.foreach(println)
-      //for (value <- futureSensorList) {
-      //  value.foreach(str => str match {
-      //    case typeSensor => println("Name of sensor " + str)
-      //  })
-      //}
 
       // Transform the list into a JsArray
       val futureSensorsJsonArray: Future[JsArray] = futureSensorList.map { sensors =>
         Json.arr(sensors)
       }
-      //val data = futureSensorsJsonArray.as[List[Data]]
-      //data.foreach(println)
-      //for (value <- futureSensorsJsonArray) {
-      //  for (v <- value) {
-      //    println("New")
-      //    println(v)
-      //  }
-      //}
+
       // Reply with the array
       futureSensorsJsonArray.map {
         sensors =>

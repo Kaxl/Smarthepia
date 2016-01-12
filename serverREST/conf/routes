@@ -17,15 +17,13 @@ PUT     /user/:firstName/:lastName  @controllers.Users.updateUser(firstName: Str
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-
-
 # Sensor management API
 # Arguments are dates (between two dates)
 # By sensor
 GET     /sensor/$sensorID<[0-9]+>/:piID/temperature     @controllers.Sensors.getTemperatureSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/$sensorID<[0-9]+>/:piID/humidity        @controllers.Sensors.getHumiditySensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/$sensorID<[0-9]+>/:piID/luminance       @controllers.Sensors.getLuminanceSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
-GET     /sensor/$sensorID<[0-9]+>/:piID/all             @controllers.Sensors.getAllFromSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
+GET     /sensors/$sensorID<[0-9]+>/:piID/all             @controllers.Sensors.getAllFromSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/:piID/all                               @controllers.Sensors.getAllFromPI(piID: String, dteStart: Option[String], dteEnd: Option[String])
 
 # By room
