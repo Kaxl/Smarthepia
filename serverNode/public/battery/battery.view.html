@@ -1,0 +1,23 @@
+<div ng-controller="BatteryController as vm">
+    <div class="bg-light lter b-b wrapper-md">
+        <h1 class="m-n font-thin h3">Filter</h1>
+        Pi id
+        <input type="text" name="pi.id" ng-model="vm.filter.piId" >
+        Pourcentage min
+        <input type="text" name="pourcentage.min" ng-model="vm.filter.pourcentage" >
+
+        <button type="button" name="load.state" class="btn btn-default" ng-click="vm.loadState(vm.filter.piId, vm.filter.pourcentage)">Get All!</button>
+    </div>
+    <div class="wrapper-md">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">State</div>
+                    <div class="panel-body" ng-if="vm.batteryChart">
+                        <zingchart id="chart.state" zc-json="vm.batteryChart" zc-height=400 zc-width=1300></zingchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

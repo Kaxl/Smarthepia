@@ -11,6 +11,7 @@
         <button type="button" name="load.temperature" class="btn btn-info" ng-click="vm.loadTemperatures(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Temp!</button>
         <button type="button" name="load.humidity" class="btn btn-success" ng-click="vm.loadHumidity(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Hum!</button>
         <button type="button" name="load.luminance" class="btn btn-danger" ng-click="vm.loadLuminance(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Lux!</button>
+        <button type="button" name="load.motion" class="btn btn-dark" ng-click="vm.loadMotion(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Moves!</button>
         <button type="button" name="load.all" class="btn btn-default" ng-click="vm.loadAll(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get All!</button>
     </div>
     <div class="wrapper-md">
@@ -40,6 +41,16 @@
                     <div class="panel-heading font-bold">Luminance</div>
                     <div class="panel-body" ng-if="vm.luminanceChart">
                         <zingchart id="chart.luminance" zc-json="vm.luminanceChart" zc-height=400 zc-width=1300></zingchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">Motion</div>
+                    <div class="panel-body" ng-if="vm.motionChart">
+                        <zingchart id="chart.motion" zc-json="vm.motionChart" zc-height=400 zc-width=1300></zingchart>
                     </div>
                 </div>
             </div>

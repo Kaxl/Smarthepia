@@ -15,6 +15,7 @@
         vm.loadTemperatures = loadTemperatures;
         vm.loadHumidity = loadHumidity;
         vm.loadLuminance = loadLuminance;
+        vm.loadMotion = loadMotion;
         vm.loadAll = loadAll;
 
         function init() {
@@ -30,7 +31,58 @@
             loadHumidity(roomId, startDate, endDate);
             loadLuminance(roomId, startDate, endDate);
             loadTemperatures(roomId, startDate, endDate);
+            loadMotion(roomId, startDate, endDate);
         }
+
+        function loadMotion(roomId, startDate, endDate) {
+            $log.debug('loadMotion called');
+            RoomService.GetMotion(roomId, startDate, endDate)
+                .then(function(motion) {
+                    var tmpValues = [];
+                    var tmpLabels = [];
+                    var sensorList = [];
+
+                    angular.forEach(motion, function(move) {
+                        if (!tmpValues[move.sensor]) {
+                            tmpValues[move.sensor] = [];
+                            tmpLabels[move.sensor] = [];
+                            sensorList.push(move.sensor);
+                        }
+                        tmpValues[move.sensor].push(move.motion);
+                        tmpLabels[move.sensor].push($filter('date')(move.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+                    });
+
+                    vm.motionChart = {
+                        type: 'line',
+                        "legend": {
+                            "item": {
+                                "font-size": 11
+                            }
+                        },
+                        "plot": {
+                            "stacked": true
+                        },
+                        "scale-x": {
+                            label: {
+                                text: "Motion"
+                            },
+                            labels: tmpLabels[sensorList[0]]
+                        },
+                        "scale-y": {
+                            "min-value": _.min(tmpValues[sensorList[0]]),
+                            "max-value": _.max(tmpValues[sensorList[0]])
+                        },
+                        series: []
+                        // series: [{
+                        //     values: tmpValues
+                        // }]
+                    };
+                    angular.forEach(sensorList, function(sensor) {
+                        vm.motionChart.series.push({"values": tmpValues[sensor], "text": sensor})
+                    });
+                    $log.info(vm.motionChart);
+                })
+        };
 
         function loadHumidity(roomId, startDate, endDate) {
             $log.debug('loadHumidity called');
@@ -38,16 +90,31 @@
                 .then(function(humidity) {
                     var tmpValues = [];
                     var tmpLabels = [];
+                    var sensorList = [];
                     // vm.temperatures = humidity;
                     angular.forEach(humidity, function(hum) {
                         // $log.info(temp);
-                        tmpValues.push(hum.humidity);
-                        tmpLabels.push($filter('date')(hum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+                        // tmpValues.push(hum.humidity);
+                        // tmpLabels.push($filter('date')(hum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+
+                        if (!tmpValues[hum.sensor]) {
+                            tmpValues[hum.sensor] = [];
+                            tmpLabels[hum.sensor] = [];
+                            sensorList.push(hum.sensor);
+                        }
+
+                        tmpValues[hum.sensor].push(hum.humidity);
+                        tmpLabels[hum.sensor].push($filter('date')(hum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
 
                     });
 
                     vm.humidityChart = {
                         type: 'line',
+                        "legend": {
+                            "item": {
+                                "font-size": 11
+                            }
+                        },
                         "plot": {
                             "stacked": true
                         },
@@ -55,16 +122,21 @@
                             label: {
                                 text: "Humidity"
                             },
-                            labels: tmpLabels
+                            labels: tmpLabels[sensorList[0]]
                         },
                         "scale-y": {
-                            "min-value": _.min(tmpValues),
-                            "max-value": _.max(tmpValues)
+                            "min-value": _.min(tmpValues[sensorList[0]]),
+                            "max-value": _.max(tmpValues[sensorList[0]])
                         },
-                        series: [{
-                            values: tmpValues
-                        }]
+                        series: []
+                        // series: [{
+                        //     values: tmpValues
+                        // }]
                     };
+                    angular.forEach(sensorList, function(sensor) {
+                        vm.humidityChart.series.push({"values": tmpValues[sensor], "text": sensor});
+                    });
+                    // };
                 })
         };
 
@@ -90,7 +162,7 @@
                         },
                         "scale-y": {
                             "min-value": _.min(tmpValues),
-                            "max-value": _.max(tmpValues)+1
+                            "max-value": _.max(tmpValues) + 1
                         },
                         series: [{
                             values: tmpValues

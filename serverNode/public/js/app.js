@@ -17,6 +17,7 @@ var app = angular.module('app', [
     'app.directives',
     'app.controllers',
     'app.sensor',
+    'app.battery',
     'app.room'
   ])
 .run(
@@ -54,6 +55,10 @@ var app = angular.module('app', [
             .state('app.room', {
                 url: '/room',
                 templateUrl: 'room/room.view.html'
+            })
+            .state('app.battery', {
+                url: '/battery',
+                templateUrl: 'battery/battery.view.html'
             })
     }
   ]
