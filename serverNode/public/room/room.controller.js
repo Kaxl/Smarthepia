@@ -19,6 +19,7 @@
         vm.loadAll = loadAll;
 
         function init() {
+            var now = new Date;
             vm.filter = {
                 roomId: 'A406',
                 dteStart: $filter('date')(now, "yyyyMMdd"),
