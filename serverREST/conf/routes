@@ -11,13 +11,15 @@ GET /                   @controllers.Application.index
 GET     /sensor/$sensorID<[0-9]+>/:piID/temperature     @controllers.Sensors.getTemperatureSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/$sensorID<[0-9]+>/:piID/humidity        @controllers.Sensors.getHumiditySensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/$sensorID<[0-9]+>/:piID/luminance       @controllers.Sensors.getLuminanceSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
-GET     /sensors/$sensorID<[0-9]+>/:piID/all             @controllers.Sensors.getAllFromSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
+GET     /sensor/$sensorID<[0-9]+>/:piID/motion          @controllers.Sensors.getMotionSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
+GET     /sensor/$sensorID<[0-9]+>/:piID/all             @controllers.Sensors.getAllFromSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /sensor/:piID/all                               @controllers.Sensors.getAllFromPI(piID: String, dteStart: Option[String], dteEnd: Option[String])
 
 # By room
 GET     /room/:name/temperature             @controllers.Sensors.getTemperatureRoom(name: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /room/:name/humidity                @controllers.Sensors.getHumidityRoom(name: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /room/:name/luminance               @controllers.Sensors.getLuminanceRoom(name: String, dteStart: Option[String], dteEnd: Option[String])
+GET     /room/:name/motion                  @controllers.Sensors.getMotionRoom(name: String, dteStart: Option[String], dteEnd: Option[String])
 GET     /room/:name/all                     @controllers.Sensors.getAllFromRoom(name: String, dteStart: Option[String], dteEnd: Option[String])
 
 # Battery info

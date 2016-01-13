@@ -4,15 +4,20 @@ import play.modules.reactivemongo.MongoController
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.concurrent.Future
 import reactivemongo.api.Cursor
+import reactivemongo.bson._
+import reactivemongo.core.commands._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import org.slf4j.{LoggerFactory, Logger}
 import javax.inject.Singleton
 import play.api.mvc._
 import play.api.libs.json._
 
+// Scala date
+import com.github.nscala_time.time.Imports._
+import org.joda.time.Days
+
 // Java date
 import java.text.SimpleDateFormat
-
 
 
 // test with json
@@ -53,7 +58,7 @@ class Sensors extends Controller with MongoController {
   import models.JsonFormatsSensor._
 
   /**
-   * @brief Get data of typeSensor of a sensor ID from a Raspberry between two dates
+   * Get data of typeSensor of a sensor ID from a Raspberry between two dates
    *
    * @param typeSensor  Type of sensor
    * @param sensorID    ID of the sensor
@@ -74,7 +79,7 @@ class Sensors extends Controller with MongoController {
       // Find between the two dates
       find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
       // Sort them by updateTime
-      sort(Json.obj("updateTime" -> -1)).
+      sort(Json.obj("updateTime" -> 1)).
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
@@ -93,7 +98,7 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
-   * @brief Get data of typeSensor from a Room
+   * Get data of typeSensor from a Room
    *
    * @param typeSensor  Type of sensor
    * @param roomName    Name of the room
@@ -111,9 +116,9 @@ class Sensors extends Controller with MongoController {
     val dteEndUnix = getUnixTimeFromString(dEnd)
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("location" -> roomName, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj(typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
-      // Sort them by updateTime
-      sort(Json.obj("updateTime" -> -1)).
+      find(Json.obj("location" -> roomName, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("sensor" -> 1, typeSensor -> 1, "updateTime" -> 1, "_id" -> 0)).
+      // Sort them by sensor and by updateTime
+      sort(Json.obj("sensor" -> 1, "updateTime" -> 1)).
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
@@ -146,6 +151,10 @@ class Sensors extends Controller with MongoController {
     getSensorValue("luminance", sensorID, piID, dteStart, dteEnd)
   }
 
+  def getMotionSensor(sensorID: Int, piID: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getSensorValue("motion", sensorID, piID, dteStart, dteEnd)
+  }
+
   /**
    * Rooms
    * Method to get a special field of the sensors by location (room)
@@ -162,8 +171,12 @@ class Sensors extends Controller with MongoController {
     getRoomValue("luminance", name, dteStart, dteEnd)
   }
 
+  def getMotionRoom(name: String, dteStart: Option[String], dteEnd: Option[String]) = Action.async {
+    getRoomValue("motion", name, dteStart, dteEnd)
+  }
+
   /**
-   * @brief Get all values of a sensors ID of a Raspberry
+   * Get all values of a sensors ID of a Raspberry
    *
    * @param sensorID    ID of the sensor
    * @param piID        ID of the Raspberry
@@ -183,7 +196,7 @@ class Sensors extends Controller with MongoController {
       // Find between the two dates
       find(Json.obj("sensor" -> sensorID, "controller" -> piID, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("_id" -> 0)).
       // Sort them by updateTime
-      sort(Json.obj("updateTime" -> -1)).
+      sort(Json.obj("updateTime" -> 1)).
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
@@ -201,7 +214,7 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
-   * @brief Get all values of room
+   * Get all values of room
    *
    * @param name        Name of the room
    * @param dteStart    Date start
@@ -220,7 +233,7 @@ class Sensors extends Controller with MongoController {
       // Find between the two dates
       find(Json.obj("location" -> name, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("_id" -> 0)).
       // Sort them by updateTime
-      sort(Json.obj("updateTime" -> -1)).
+      sort(Json.obj("updateTime" -> 1)).
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
@@ -238,7 +251,7 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
-   * @brief Get all values of a Raspberry
+   * Get all values of a Raspberry
    *
    * @param piID        ID of the Raspberry
    * @param dteStart    Date start
@@ -257,7 +270,7 @@ class Sensors extends Controller with MongoController {
       // Find between the two dates
       find(Json.obj("controller" -> piID, "updateTime" -> Json.obj("$gte" -> dteStartUnix, "$lte" -> dteEndUnix)), Json.obj("_id" -> 0)).
       // Sort them by updateTime
-      sort(Json.obj("updateTime" -> -1)).
+      sort(Json.obj("updateTime" -> 1)).
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
@@ -275,7 +288,7 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
-   * @brief Get list of Sensors which have a battery below (or equal) the given pourcentage
+   * Get list of Sensors which have a battery below (or equal) the given pourcentage
    *
    * @param piID          ID of the Raspberry
    * @param pourcentage   Pourcentage limit
@@ -283,11 +296,19 @@ class Sensors extends Controller with MongoController {
    * @return
    */
   def getBattery(piID: String, pourcentage: Int) = Action.async {
+    // Calculate the date/time of 4 minutes ago in order to get
+    // last values of battery for each sensors
+    val sinceDate = DateTime.now - 4.minutes
+    val sinceUpdateTime = sinceDate.getMillis() / 1000
+    println(sinceDate)
+    println(sinceUpdateTime)
+
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
-      find(Json.obj("controller" -> piID, "battery" -> Json.obj("$lte" -> pourcentage)), Json.obj("sensor" -> 1, "battery" -> 1, "_id" -> 0)).
+      find(Json.obj("controller" -> piID, "battery" -> Json.obj("$lte" -> pourcentage), "updateTime" -> Json.obj("$gte" -> sinceUpdateTime)), Json.obj("sensor" -> 1, "battery" -> 1, "updateTime" -> 1, "_id" -> 0)).
       // Sort them by updateTime
       sort(Json.obj("updateTime" -> -1)).
+      // Limit to 1 record (last value)
       // Perform the query and get a cursor of JsObject
       cursor[JsObject]
       // Put all the JsObjects in a list
@@ -305,7 +326,7 @@ class Sensors extends Controller with MongoController {
   }
 
   /**
-   * @brief Get the Unix time from a string date in format "yyyyMMdd"
+   * Get the Unix time from a string date in format "yyyyMMdd"
    *
    * @param dte   Date to parse
    *
