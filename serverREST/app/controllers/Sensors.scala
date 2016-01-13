@@ -300,8 +300,6 @@ class Sensors extends Controller with MongoController {
     // last values of battery for each sensors
     val sinceDate = DateTime.now - 4.minutes
     val sinceUpdateTime = sinceDate.getMillis() / 1000
-    println(sinceDate)
-    println(sinceUpdateTime)
 
     val cursor: Cursor[JsObject] = collection.
       // Find between the two dates
