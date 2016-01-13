@@ -18,6 +18,6 @@ app.use(function(req, res, next) {
 // =======================
 // start the server ======
 // =======================
-var port = 9090
+var port = 5000
 app.listen(port);
 console.log('Magic happens at http://localhost:' + port);
