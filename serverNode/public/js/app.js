@@ -16,7 +16,8 @@ var app = angular.module('app', [
     'app.services',
     'app.directives',
     'app.controllers',
-    'app.sensor'
+    'app.sensor',
+    'app.room'
   ])
 .run(
   [          '$rootScope', '$state', '$stateParams',
@@ -50,35 +51,9 @@ var app = angular.module('app', [
                 url: '/sensor',
                 templateUrl: 'sensor/sensor.view.html'
             })
-            .state('app.ui.chart', {
-                url: '/chart',
-                templateUrl: 'tpl/ui_chart.html'
-            })
-            // form
-            .state('app.form', {
-                url: '/form',
-                template: '<div ui-view class="fade-in"></div>'
-            })
-            .state('app.form.elements', {
-                url: '/elements',
-                templateUrl: 'tpl/form_elements.html'
-            })
-            .state('app.form.validation', {
-                url: '/validation',
-                templateUrl: 'tpl/form_validation.html'
-            })
-            .state('app.form.wizard', {
-                url: '/wizard',
-                templateUrl: 'tpl/form_wizard.html'
-            })
-            // pages
-            .state('app.docs', {
-                url: '/docs',
-                templateUrl: 'tpl/docs.html'
-            })
-            .state('access.404', {
-                url: '/404',
-                templateUrl: 'tpl/page_404.html'
+            .state('app.room', {
+                url: '/room',
+                templateUrl: 'room/room.view.html'
             })
     }
   ]

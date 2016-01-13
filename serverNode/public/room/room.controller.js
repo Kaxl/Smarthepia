@@ -2,13 +2,13 @@
     'use strict';
 
     angular
-        .module('app.sensor')
-        .controller('SensorController', SensorController);
+        .module('app.room')
+        .controller('RoomController', RoomController);
 
 
-    SensorController.$inject = ['$log', 'SensorService', '$scope', '$filter', '_'];
+    RoomController.$inject = ['$log', 'RoomService', '$scope', '$filter', '_'];
 
-    function SensorController($log, SensorService, $scope, $filter, _) {
+    function RoomController($log, RoomService, $scope, $filter, _) {
         var vm = this;
 
         vm.init = init;
@@ -19,23 +19,22 @@
 
         function init() {
             vm.filter = {
-                sensorId: '8',
-                piId: 'Pi 3',
+                roomId: 'A406',
                 dteStart: '20160112',
                 dteEnd: '20160113'
             };
             $log.debug(vm.filter);
         }
 
-        function loadAll(sensorId, piId, startDate, endDate) {
-            loadHumidity(sensorId, piId, startDate, endDate);
-            loadLuminance(sensorId, piId, startDate, endDate);
-            loadTemperatures(sensorId, piId, startDate, endDate);
+        function loadAll(roomId, startDate, endDate) {
+            loadHumidity(roomId, startDate, endDate);
+            loadLuminance(roomId, startDate, endDate);
+            loadTemperatures(roomId, startDate, endDate);
         }
 
-        function loadHumidity(sensorId, piId, startDate, endDate) {
+        function loadHumidity(roomId, startDate, endDate) {
             $log.debug('loadHumidity called');
-            SensorService.GetHumidity(sensorId, piId, startDate, endDate)
+            RoomService.GetHumidity(roomId, startDate, endDate)
                 .then(function(humidity) {
                     var tmpValues = [];
                     var tmpLabels = [];
@@ -69,9 +68,9 @@
                 })
         };
 
-        function loadLuminance(sensorId, piId, startDate, endDate) {
+        function loadLuminance(roomId, startDate, endDate) {
             $log.debug('loadLuminance called');
-            SensorService.GetLuminance(sensorId, piId, startDate, endDate)
+            RoomService.GetLuminance(roomId, startDate, endDate)
                 .then(function(luminance) {
                     var tmpValues = [];
                     var tmpLabels = [];
@@ -100,9 +99,9 @@
                 })
         };
 
-        function loadTemperatures(sensorId, piId, startDate, endDate) {
+        function loadTemperatures(roomId, startDate, endDate) {
             $log.debug('loadTemperatures called');
-            SensorService.GetTemperature(sensorId, piId, startDate, endDate)
+            RoomService.GetTemperature(roomId, startDate, endDate)
                 .then(function(temperatures) {
                     var tmpValues = [];
                     var tmpLabels = [];

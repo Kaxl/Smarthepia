@@ -1,14 +1,19 @@
 <!-- navbar header -->
 <div class="navbar-header">
-  <a href="#/" class="navbar-brand">
-    <span class="m-l-xs">Smarthepia</span>
-  </a>
+    <a href="#/" class="navbar-brand">
+        <span class="m-l-xs">Smarthepia</span>
+    </a>
 </div>
-<!-- / navbar header -->
 
 <!-- navbar collapse -->
 <div class="collapse navbar-collapse box-shadow {{app.settings.navbarCollapseColor}}">
-  <ul class="nav navbar-nav navbar-right">
-  </ul>
+    <ul class="nav navbar-nav nav-pills">
+        <li role="presentation" ng-class="{active: $state.includes('app.sensor')}">
+            <a href="#/app/sensor">Sensors</a>
+        </li>
+        <li role="presentation" ng-class="{active: $state.includes('app.room')}">
+            <a href="#/app/room">Rooms</a>
+        </li>
+    </u>
 </div>
 <!-- / navbar collapse -->

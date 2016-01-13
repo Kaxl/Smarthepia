@@ -1,19 +1,17 @@
-<div ng-controller="SensorController as vm">
+<div ng-controller="RoomController as vm">
     <div class="bg-light lter b-b wrapper-md">
         <h1 class="m-n font-thin h3">Filter</h1>
-        Sensor id
-        <input type="text" name="sensor.id" ng-model="vm.filter.sensorId" >
-        Raspberry id
-        <input type="text" name="pi.id" ng-model="vm.filter.piId" >
+        Room name
+        <input type="text" name="room.id" ng-model="vm.filter.roomId" >
         Start date
         <input type="text" name="date.start" ng-model="vm.filter.dteStart" >
         End date
         <input type="text" name="date.end" ng-model="vm.filter.dteEnd" >
 
-        <button type="button" name="load.temperature" class="btn btn-info" ng-click="vm.loadTemperatures(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get Temp!</button>
-        <button type="button" name="load.humidity" class="btn btn-success" ng-click="vm.loadHumidity(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get Hum!</button>
-        <button type="button" name="load.luminance" class="btn btn-danger" ng-click="vm.loadLuminance(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get Lux!</button>
-        <button type="button" name="load.all" class="btn btn-default" ng-click="vm.loadAll(vm.filter.sensorId, vm.filter.piId, vm.filter.dteStart, vm.filter.dteEnd)">Get All!</button>
+        <button type="button" name="load.temperature" class="btn btn-info" ng-click="vm.loadTemperatures(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Temp!</button>
+        <button type="button" name="load.humidity" class="btn btn-success" ng-click="vm.loadHumidity(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Hum!</button>
+        <button type="button" name="load.luminance" class="btn btn-danger" ng-click="vm.loadLuminance(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get Lux!</button>
+        <button type="button" name="load.all" class="btn btn-default" ng-click="vm.loadAll(vm.filter.roomId, vm.filter.dteStart, vm.filter.dteEnd)">Get All!</button>
     </div>
     <div class="wrapper-md">
         <div class="row">
