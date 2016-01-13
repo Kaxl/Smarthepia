@@ -19,11 +19,12 @@
         vm.loadAll = loadAll;
 
         function init() {
+            var now = new Date;
             vm.filter = {
                 sensorId: '8',
                 piId: 'Pi 3',
-                dteStart: '20160112',
-                dteEnd: '20160113'
+                dteStart: $filter('date')(now, "yyyyMMdd"),
+                dteEnd: $filter('date')(now.setDate(now.getDate() + 1), "yyyyMMdd")
             };
             $log.debug(vm.filter);
         }
