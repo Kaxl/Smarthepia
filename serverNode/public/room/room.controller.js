@@ -24,6 +24,7 @@
                 dteStart: '20160112',
                 dteEnd: '20160113'
             };
+
             $log.debug(vm.filter);
         }
 
@@ -78,7 +79,7 @@
                         // }]
                     };
                     angular.forEach(sensorList, function(sensor) {
-                        vm.motionChart.series.push({"values": tmpValues[sensor], "text": sensor})
+                        vm.motionChart.series.push({"values": tmpValues[sensor], "text": "Sensor : " + sensor})
                     });
                     $log.info(vm.motionChart);
                 })
@@ -134,7 +135,7 @@
                         // }]
                     };
                     angular.forEach(sensorList, function(sensor) {
-                        vm.humidityChart.series.push({"values": tmpValues[sensor], "text": sensor});
+                        vm.humidityChart.series.push({"values": tmpValues[sensor], "text": "Sensor : " + sensor});
                     });
                     // };
                 })
@@ -146,61 +147,164 @@
                 .then(function(luminance) {
                     var tmpValues = [];
                     var tmpLabels = [];
+                    var sensorList = [];
+                    // vm.temperatures = humidity;
+                    angular.forEach(luminance, function(lum) {
+                        // $log.info(temp);
+                        // tmpValues.push(hum.humidity);
+                        // tmpLabels.push($filter('date')(hum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
 
-                    angular.forEach(luminance, function(lux) {
-                        tmpValues.push(lux.luminance);
-                        tmpLabels.push($filter('date')(lux.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+                        if (!tmpValues[lum.sensor]) {
+                            tmpValues[lum.sensor] = [];
+                            tmpLabels[lum.sensor] = [];
+                            sensorList.push(lum.sensor);
+                        }
+
+                        tmpValues[lum.sensor].push(lum.luminance);
+                        tmpLabels[lum.sensor].push($filter('date')(lum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+
                     });
 
                     vm.luminanceChart = {
                         type: 'line',
+                        "legend": {
+                            "item": {
+                                "font-size": 11
+                            }
+                        },
+                        "plot": {
+                            "stacked": true
+                        },
                         "scale-x": {
                             label: {
                                 text: "Luminance"
                             },
-                            labels: tmpLabels
+                            labels: tmpLabels[sensorList[1]]
                         },
                         "scale-y": {
-                            "min-value": _.min(tmpValues),
-                            "max-value": _.max(tmpValues) + 1
+                            // "min-value": _.min(_.min(tmpValues)),
+                            // "max-value": _.max(_.flatten(tmpValues))
+                            //
+                            "min-value": _.min([_.min(tmpValues[sensorList[0]]), _.min(tmpValues[sensorList[1]])]),
+                            "max-value": _.max([_.max(tmpValues[sensorList[0]]), _.max(tmpValues[sensorList[1]])])
+                            // "max-value": _.max(tmpValues[sensorList[0]])
                         },
-                        series: [{
-                            values: tmpValues
-                        }]
+                        series: []
+                        // series: [{
+                        //     values: tmpValues
+                        // }]
                     };
+                    angular.forEach(sensorList, function(sensor) {
+                        vm.luminanceChart.series.push({"values": tmpValues[sensor], "text": "Sensor : " + sensor});
+                    });
+                    $log.debug(vm.luminanceChart);
                 })
         };
 
         function loadTemperatures(roomId, startDate, endDate) {
             $log.debug('loadTemperatures called');
             RoomService.GetTemperature(roomId, startDate, endDate)
-                .then(function(temperatures) {
+                .then(function(temperature) {
                     var tmpValues = [];
                     var tmpLabels = [];
+                    var sensorList = [];
+                    // vm.temperatures = humidity;
+                    angular.forEach(temperature, function(temp) {
+                        // $log.info(temp);
+                        // tmpValues.push(hum.humidity);
+                        // tmpLabels.push($filter('date')(hum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
 
-                    angular.forEach(temperatures, function(temp) {
-                        tmpValues.push(temp.temperature);
-                        tmpLabels.push($filter('date')(temp.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+                        if (!tmpValues[temp.sensor]) {
+                            tmpValues[temp.sensor] = [];
+                            tmpLabels[temp.sensor] = [];
+                            sensorList.push(temp.sensor);
+                        }
+
+                        tmpValues[temp.sensor].push(temp.temperature);
+                        tmpLabels[temp.sensor].push($filter('date')(temp.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+
                     });
 
                     vm.temperaturesChart = {
                         type: 'line',
+                        "legend": {
+                            "item": {
+                                "font-size": 11
+                            }
+                        },
+                        "plot": {
+                            "stacked": true
+                        },
                         "scale-x": {
                             label: {
                                 text: "Temperatures"
                             },
-                            labels: tmpLabels
+                            labels: tmpLabels[sensorList[1]]
                         },
                         "scale-y": {
-                            "min-value": _.min(tmpValues),
-                            "max-value": _.max(tmpValues)
+                            "min-value": _.min([_.min(tmpValues[sensorList[0]]), _.min(tmpValues[sensorList[1]])]),
+                            "max-value": _.max([_.max(tmpValues[sensorList[0]]), _.max(tmpValues[sensorList[1]])])
                         },
-                        series: [{
-                            values: tmpValues
-                        }]
+                        series: []
+                        // series: [{
+                        //     values: tmpValues
+                        // }]
                     };
+                    angular.forEach(sensorList, function(sensor) {
+                        vm.temperaturesChart.series.push({"values": tmpValues[sensor], "text": "Sensor : " + sensor});
+                    });
+                    $log.debug(vm.temperaturesChart);
                 })
-        }
+        };
+
+        // function loadTemperatures(roomId, startDate, endDate) {
+        //     $log.debug('loadTemperatures called');
+        //
+        //     RoomService.GetTemperature(roomId, startDate, endDate)
+        //         .then(function(temperature) {
+        //             var tmpValues = [];
+        //             var tmpLabels = [];
+        //             var sensorList = [];
+        //
+        //             angular.forEach(temperature, function(temp) {
+        //
+        //                 if (!tmpValues[temp.sensor]) {
+        //                     tmpValues[temp.sensor] = [];
+        //                     tmpLabels[temp.sensor] = [];
+        //                     sensorList.push(temp.sensor);
+        //                 }
+        //
+        //                 tmpValues[temp.sensor].push(temp.temperature);
+        //                 tmpLabels[temp.sensor].push($filter('date')(temp.updateTime * 1000, "dd/MM/yyyy HH:mm"));
+        //             });
+        //
+        //             vm.temperaturesChart = [];
+        //
+        //             angular.forEach(sensorList, function(sensor) {
+        //                 vm.temperaturesChart.push({
+        //                         "sensor": sensor,
+        //                         "chart": {
+        //                             type: 'line',
+        //                             "scale-x": {
+        //                                 label: {
+        //                                     text: "Temperatures for sensor " + sensor
+        //                                 },
+        //                                 labels: tmpLabels[sensor]
+        //                             },
+        //                             "scale-y": {
+        //                                 "min-value": _.min(tmpValues[sensor]),
+        //                                 "max-value": _.max(tmpValues[sensor])
+        //                             },
+        //                             series: [{
+        //                                 values: tmpValues[sensor]
+        //                             }]
+        //                         }
+        //                     }
+        //                 );
+        //             });
+        //             $log.debug(vm.temperaturesChart);
+        //         });
+        // }
 
         init();
     }

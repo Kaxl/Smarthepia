@@ -27,9 +27,12 @@
                 .then(function(state) {
                     var tmpValues = [];
                     var tmpLabels = [];
+
+                    $log.debug(state);
+
                     angular.forEach(state, function(bat) {
                         tmpValues.push(bat.battery);
-                        tmpLabels.push(bat.sensor);
+                        tmpLabels.push("Sensor " + bat.sensor);
                         // tmpLabels.push($filter('date')(bat.updateTime * 1000, "dd/MM/yyyy HH:mm"));
                     });
 
@@ -45,7 +48,7 @@
                             labels: tmpLabels
                         },
                         "scale-y": {
-                            "min-value": _.min(tmpValues),
+                            "min-value": _.min(tmpValues)-1,
                             "max-value": _.max(tmpValues)
                         },
                         series: [{
