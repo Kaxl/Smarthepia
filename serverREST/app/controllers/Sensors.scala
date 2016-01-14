@@ -331,8 +331,17 @@ class Sensors extends Controller with MongoController {
    * @return The Unix timestamp
    */
   def getUnixTimeFromString(dte: String): Long = {
-    val stringFormat = new SimpleDateFormat("yyyyMMdd")
-    stringFormat.parse(dte).getTime() / 1000
+    try {
+      val stringFormat = new SimpleDateFormat("yyyyMMdd")
+      stringFormat.parse(dte).getTime() / 1000
+    } catch {
+      case e : Exception => {
+        println("Error with the date provided : " + e)
+        return 0
+      }
+    }
   }
+
+  def isNumeric(input: String): Boolean = input.forall(_.isDigit)
 }
 
