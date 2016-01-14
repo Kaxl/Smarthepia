@@ -37,8 +37,6 @@
         }
 
         function loadMotion(sensorId, piId, startDate, endDate) {
-            $log.debug('loadMotion called');
-            // SensorService.GetMotion(sensorId, piId, startDate, endDate)
             SensorService.GetInfo('motion', sensorId, piId, startDate, endDate)
                 .then(function(motion) {
                     var tmpValues = [];
@@ -73,15 +71,12 @@
         };
 
         function loadHumidity(sensorId, piId, startDate, endDate) {
-            $log.debug('loadHumidity called');
-            // SensorService.GetHumidity(sensorId, piId, startDate, endDate)
             SensorService.GetInfo('humidity', sensorId, piId, startDate, endDate)
                 .then(function(humidity) {
                     var tmpValues = [];
                     var tmpLabels = [];
-                    // vm.temperatures = humidity;
+
                     angular.forEach(humidity, function(hum) {
-                        // $log.info(temp);
                         tmpValues.push(hum.humidity);
                         tmpLabels.push($filter('date')(hum.updateTime * 1000, "dd/MM/yyyy HH:mm"));
 
@@ -110,8 +105,6 @@
         };
 
         function loadLuminance(sensorId, piId, startDate, endDate) {
-            $log.debug('loadLuminance called');
-            // SensorService.GetLuminance(sensorId, piId, startDate, endDate)
             SensorService.GetInfo('luminance', sensorId, piId, startDate, endDate)
                 .then(function(luminance) {
                     var tmpValues = [];
@@ -142,8 +135,6 @@
         };
 
         function loadTemperatures(sensorId, piId, startDate, endDate) {
-            $log.debug('loadTemperatures called');
-            // SensorService.GetTemperature(sensorId, piId, startDate, endDate)
             SensorService.GetInfo('temperature', sensorId, piId, startDate, endDate)
                 .then(function(temperatures) {
                     var tmpValues = [];

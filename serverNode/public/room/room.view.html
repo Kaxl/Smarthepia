@@ -20,15 +20,6 @@
                 <div class="panel panel-default">
                     <div class="panel-heading font-bold">Temperatures</div>
                     <div class="panel-body" ng-if="vm.temperaturesChart">
-                        <!-- <div style="height:200px" class="row" ng-repeat="tempChart in vm.temperaturesChart track by $index" ng-init="$log.debug(tempChart.chart)">
-                            <zingchart id="chart.temperature{{$index}}" zc-json="tempChart.chart" zc-height=200 zc-width=1300></zingchart>
-                        </div> -->
-                        <!-- <div class="row">
-                            <zingchart id="chart.temperature0" zc-json="vm.temperaturesChart[0].chart" zc-height=200 zc-width=1300></zingchart>
-                        </div>
-                        <div class="row">
-                            <zingchart id="chart.temperature1" zc-json="vm.temperaturesChart[1].chart" zc-height=200 zc-width=1300></zingchart>
-                        </div> -->
                         <zingchart id="chart.temperature" zc-json="vm.temperaturesChart" zc-height=400 zc-width=1300></zingchart>
                     </div>
                 </div>
@@ -39,9 +30,6 @@
                 <div class="panel panel-default">
                     <div class="panel-heading font-bold">Humidity</div>
                     <div class="panel-body" ng-if="vm.humidityChart">
-                        <!-- <div ng-repeat="humChart in vm.humidityChart track by $index">
-                            <zingchart id="chart.humidity{{$index}}" zc-json="humChart" zc-height={{400/vm.humidityChart.length}} zc-width=1300></zingchart>
-                        </div> -->
                         <zingchart id="chart.humidity" zc-json="vm.humidityChart" zc-height=400 zc-width=1300></zingchart>
                     </div>
                 </div>

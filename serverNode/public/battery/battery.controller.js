@@ -33,7 +33,6 @@
                     angular.forEach(state, function(bat) {
                         tmpValues.push(bat.battery);
                         tmpLabels.push("Sensor " + bat.sensor);
-                        // tmpLabels.push($filter('date')(bat.updateTime * 1000, "dd/MM/yyyy HH:mm"));
                     });
 
                     vm.batteryChart = {
@@ -43,7 +42,7 @@
                         },
                         "scale-x": {
                             label: {
-                                text: "Battery states"
+                                text: "Battery states*"
                             },
                             labels: tmpLabels
                         },

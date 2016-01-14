@@ -15,6 +15,7 @@
                     <div class="panel-heading font-bold">State</div>
                     <div class="panel-body" ng-if="vm.batteryChart">
                         <zingchart id="chart.state" zc-json="vm.batteryChart" zc-height=400 zc-width=1300></zingchart>
+                        <p class="help-block lead text-right"><small>*Only sensors which have sent information in the last 4 minutes.</small></p>
                     </div>
                 </div>
             </div>
